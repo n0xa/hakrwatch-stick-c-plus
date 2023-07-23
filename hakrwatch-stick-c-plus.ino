@@ -86,7 +86,7 @@ void screen_dim_proc() {
   // time up to 2 seconds after(for long pause operations
   if (screen_dim_dimmed == false) {
     if (M5.Rtc.Second == screen_dim_current || (M5.Rtc.Second + 1) == screen_dim_current || (M5.Rtc.Second + 2) == screen_dim_current) {
-      M5.Axp.ScreenBreath(4);
+      M5.Axp.ScreenBreath(0);
       screen_dim_dimmed = true;
     }
   }
@@ -606,6 +606,9 @@ void tvbgone_setup() {
   M5.Lcd.setCursor(5, 1);
   M5.Lcd.println("TV-B-Gone");
   irsend.begin();
+  // Hack: Set IRLED high to turn it off after setup. Otherwise it stays on (active low)
+  digitalWrite(IRLED, HIGH);
+
   delay_ten_us(5000);
   // determine region
   //M5.Lcd.setCursor(8,1);
@@ -720,6 +723,9 @@ void sendAllCodes()
     
     // Send Code with library
     irsend.sendRaw(rawData, (numpairs * 2) , freq);
+    // Hack: Set IRLED high to turn it off after each burst. Otherwise it stays on (active low)
+    digitalWrite(IRLED, HIGH);
+
     Serial.print("\n");
     yield();
     //Flush remaining bits, so that next code starts
@@ -805,8 +811,6 @@ void quickflashLEDx( uint8_t x ) {
 
 /// CLOCK ///
 void clock_setup() {
-  // Hack: Set IRLED high in watch mode to turn it off. Otherwise it stays on (active low)
-  digitalWrite(IRLED, HIGH);
   M5.Lcd.setRotation(rotation);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setTextSize(3);
