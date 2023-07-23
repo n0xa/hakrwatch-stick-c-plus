@@ -2,7 +2,7 @@
 // V. 1.3
 
 
-#include <M5StickC.h>
+#include <M5StickCPlus.h>
 
 #include <WiFi.h>          //ESP8266 Core WiFi Library
 #include <DNSServer.h>            //Local DNS Server used for redirecting all requests to the configuration portal
@@ -46,10 +46,9 @@ bool rstOverride = false;
 // 3 - Wifi Clock set
 // 4 - Dimmer Time adjustment
 // 5 - TV B-GONE
-// 6 - MEGALOVAINIA
-// 7 - Battery info
-// 8 - screen rotation
-// 9 - timezone menu
+// 6 - Battery info
+// 7 - screen rotation
+// 8 - timezone menu
 bool isSwitching = true;
 int current_proc = 0;
 
@@ -87,7 +86,7 @@ void screen_dim_proc() {
   // time up to 2 seconds after(for long pause operations
   if (screen_dim_dimmed == false) {
     if (M5.Rtc.Second == screen_dim_current || (M5.Rtc.Second + 1) == screen_dim_current || (M5.Rtc.Second + 2) == screen_dim_current) {
-      M5.Axp.ScreenBreath(7);
+      M5.Axp.ScreenBreath(4);
       screen_dim_dimmed = true;
     }
   }
@@ -98,13 +97,12 @@ void screen_dim_proc() {
 MENU mmenu[] = {
   { "clock", 0},
   { "TV B-GONE", 5},
-  { "Megalovainia", 6},
   { "settings", 2},
 };
 
 void mmenu_drawmenu() {
   // List items
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
   for ( int i = 0 ; i < ( sizeof(mmenu) / sizeof(MENU) ) ; i++ ) {
@@ -114,7 +112,7 @@ void mmenu_drawmenu() {
 }
 
 void mmenu_setup() {
-  M5.Lcd.setRotation(0);
+  M5.Lcd.setRotation(rotation);
 
   cursor = 0;
   rstOverride = true;
@@ -142,16 +140,16 @@ void mmenu_loop() {
 /// SETTINGS MENU ///
 
 MENU smenu[] = {
-  { "set clock", 3},
+  { "set clock", 8},
   { "set dim time", 4},
-  { "battery info", 7},
-  { "rotation", 8},
+  { "battery info", 6},
+  { "rotation", 7},
   { "back", 1},
 };
 
 void smenu_drawmenu() {
   // List items
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
   for ( int i = 0 ; i < ( sizeof(smenu) / sizeof(MENU) ) ; i++ ) {
@@ -161,7 +159,7 @@ void smenu_drawmenu() {
 }
 
 void smenu_setup() {
-  M5.Lcd.setRotation(0);
+  M5.Lcd.setRotation(rotation);
 
   cursor = 0;
   rstOverride = true;
@@ -200,7 +198,7 @@ MENU dmenu[] = {
 
 void dmenu_drawmenu() {
   // List items
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
   for ( int i = 0 ; i < ( sizeof(dmenu) / sizeof(MENU) ) ; i++ ) {
@@ -210,7 +208,7 @@ void dmenu_drawmenu() {
 }
 
 void dmenu_setup() {
-  M5.Lcd.setRotation(0);
+  M5.Lcd.setRotation(rotation);
 
   cursor = 0;
   rstOverride = true;
@@ -246,7 +244,7 @@ MENU rmenu[] = {
 
 void rmenu_drawmenu() {
   // List items
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
   for ( int i = 0 ; i < ( sizeof(rmenu) / sizeof(MENU) ) ; i++ ) {
@@ -256,7 +254,7 @@ void rmenu_drawmenu() {
 }
 
 void rmenu_setup() {
-  M5.Lcd.setRotation(0);
+  M5.Lcd.setRotation(rotation);
 
   cursor = 0;
   rstOverride = true;
@@ -291,7 +289,7 @@ void rmenu_loop() {
 
 void battery_drawmenu(int battery, int b, int c) {
   // Clear screen
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
 
@@ -313,7 +311,7 @@ void battery_drawmenu(int battery, int b, int c) {
 }
 
 void battery_setup() {
-  M5.Lcd.setRotation(0);
+  M5.Lcd.setRotation(rotation);
   rstOverride = false;
 
   // Get battery levels
@@ -344,47 +342,6 @@ void battery_loop() {
     isSwitching = true;
     current_proc = 1;
   }
-}
-
-/// MEGALOVAINIA ///
-int const TEMPO = 1200;
-
-int melody[] = {
-  N_D3, N_D3, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_C3, N_C3, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_B2, N_B2, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_AS2, N_AS2, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_D3, N_D3, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_C3, N_C3, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_B2, N_B2, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_AS2, N_AS2, N_D4, N_A3, 0, N_GS3, N_G3, N_F3, N_D3, N_F3, N_G3, N_D4, N_D4, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_C4, N_C4, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_B3, N_B3, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_AS3, N_AS3, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_D4, N_D4, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_C4, N_C4, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_B3, N_B3, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_AS3, N_AS3, N_D5, N_A4, 0, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, N_F4, N_F4, N_F4, N_F4, N_F4, N_D4, N_D4, N_D4, N_F4, N_F4, N_F4, N_G4, N_GS4, N_G4, N_F4, N_D4, N_F4, N_G4, 0, N_F4, N_F4, N_F4, N_G4, N_GS4, N_A4, N_C5, N_A4, N_D5, N_D5, N_D5, N_A4, N_D5, N_C5, N_F4, N_F4, N_F4, N_F4, N_F4, N_D4, N_D4, N_D4, N_F4, N_F4, N_F4, N_F4, N_D4, N_F4, N_E4, N_D4, N_C4, 0, N_G4, N_E4, N_D4, N_D4, N_D4, N_D4, N_F3, N_G3, N_AS3, N_C4, N_D4, N_F4, N_C5, 0, N_F4, N_D4, N_F4, N_G4, N_GS4, N_G4, N_F4, N_D4, N_GS4, N_G4, N_F4, N_D4, N_F4, N_F4, N_F4, N_GS4, N_A4, N_C5, N_A4, N_GS4, N_G4, N_F4, N_D4, N_E4, N_F4, N_G4, N_A4, N_C5, N_CS5, N_GS4, N_GS4, N_G4, N_F4, N_G4, N_F3, N_G3, N_A3, N_F4, N_E4, N_D4, N_E4, N_F4, N_G4, N_E4, N_A4, N_A4, N_G4, N_F4, N_DS4, N_CS4, N_DS4, 0, N_F4, N_D4, N_F4, N_G4, N_GS4, N_G4, N_F4, N_D4, N_GS4, N_G4, N_F4, N_D4, N_F4, N_F4, N_F4, N_GS4, N_A4, N_C5, N_A4, N_GS4, N_G4, N_F4, N_D4, N_E4, N_F4, N_G4, N_A4, N_C5, N_CS5, N_GS4, N_GS4, N_G4, N_F4, N_G4, N_F3, N_G3, N_A3, N_F4, N_E4, N_D4, N_E4, N_F4, N_G4, N_E4, N_A4, N_A4, N_G4, N_F4, N_DS4, N_CS4, N_DS4,
-};
-
-int noteDurations[] = {
-  16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 16, 16, 8, 6, 32, 8, 8, 8, 16, 16, 16, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 16, 16, 16, 16, 16, 8, 8, 16, 8, 8, 8, 8, 8, 8, 8, 8, 16, 16, 16, 2, 8, 16, 8, 8, 8, 8, 4, 16, 8, 16, 8, 8, 8, 8, 8, 16, 8, 16, 8, 8, 8, 8, 8, 8, 8, 16, 8, 15, 8, 8, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8,  8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 2, 3, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 8, 2, 16, 8, 16, 8, 16, 16, 16, 16, 16, 16, 8, 8, 8, 8,  8, 8, 16, 16, 16, 2, 8, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 8, 8, 8, 8, 2, 2
-};
-
-//melody = 266 notes
-
-const int servo_pin = 26;
-int freq = 50;
-int ledChannel = 0;
-int resolution = 10;
-
-void megalovainia_setup() {
-  M5.Lcd.setRotation(0);
-  M5.Lcd.fillScreen(BLACK);
-  M5.Lcd.drawBitmap(0, 0, 160, 80, image_data_sans);
-  int melody_len = sizeof(melody) / sizeof(melody[0]);
-  ledcSetup(ledChannel, freq, resolution);
-  ledcAttachPin(servo_pin, ledChannel);
-  ledcWrite(ledChannel, 256);//0°
-
-  for (int thisNote = 0; thisNote < melody_len; thisNote++) {
-    switcher_button_proc(); // This is a cancel option
-    if (current_proc == 6) {
-      int noteDuration = TEMPO / noteDurations[thisNote];
-      ledcWriteTone(0, melody[thisNote]);
-      int pauseBetweenNotes = noteDuration * 1.45;
-      delay(pauseBetweenNotes);
-    }
-    ledcWriteTone(0, 0);
-  }
-  isSwitching = true;
-  current_proc = 1;
 }
 
 /// Timezone menu ///
@@ -436,12 +393,13 @@ MENU tzmenu[] = {
 void tzmenu_drawmenu() {
   // List items
   M5.Lcd.setRotation(0);
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(2);
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 8, 1);
   // FUTURE REF: This code is a scrolling menu. Might use later for expansion
-  if (cursor > 18) {
-    for ( int i = 0 + (cursor - 18) ; i < ( sizeof(tzmenu) / sizeof(MENU) ) ; i++ ) {
+  // resize list to 8 for the larger font in use
+  if (cursor > 8) {
+    for ( int i = 0 + (cursor - 8) ; i < ( sizeof(tzmenu) / sizeof(MENU) ) ; i++ ) {
       M5.Lcd.print((cursor == i) ? ">" : " ");
       M5.Lcd.println(tzmenu[i].name);
     }
@@ -498,7 +456,7 @@ void set_clock_setup() {
     current_proc = 9;
   } else {
     // Set the screen
-    M5.Lcd.setTextSize(1);
+    M5.Lcd.setTextSize(2);
     M5.Lcd.setRotation(rotation);
     M5.Lcd.fillScreen(BLACK);
     M5.Lcd.setCursor(0, 8, 2);
@@ -511,8 +469,8 @@ void set_clock_setup() {
     for (i = 0; i < len; i++) {
       pw = pw + letters[random(0, 35)];
     }
-
-    M5.Lcd.println("Please connect WIFI");
+    M5.Lcd.setTextSize(2);
+    M5.Lcd.println("Connect WIFI");
     M5.Lcd.println("SSID: HAKRWATCH");
     M5.Lcd.print("PW: ");
     M5.Lcd.println(pw);
@@ -522,9 +480,9 @@ void set_clock_setup() {
     wifiManager.autoConnect("HAKRWATCH", pw.c_str());
     // Clear screen
     M5.Lcd.fillScreen(BLACK);
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor(20, 30, 1);
-    M5.Lcd.print("PLS WAIT");
+    M5.Lcd.setTextSize(4);
+    M5.Lcd.setCursor(5, 40, 1);
+    M5.Lcd.print("NTP Query");
     // Set ntp client
     timeClient.begin();
     // Set offset time in seconds to adjust for your timezone, for example:
@@ -548,7 +506,7 @@ void set_clock_loop() {
     // The formattedDate comes with the following format:
     // 2018-05-28T16:00:13Z
     // We need to extract date and time
-    formattedDate = timeClient.getFormattedDate();
+    formattedDate = timeClient.getFormattedTime();
     Serial.println(formattedDate);
 
     // Extract date
@@ -571,8 +529,8 @@ void set_clock_loop() {
     M5.Rtc.SetTime(&TimeStruct);
     delay(1000);
     M5.Lcd.fillScreen(BLACK);
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor(20, 30, 1);
+    M5.Lcd.setTextSize(4);
+    M5.Lcd.setCursor(5, 40, 1);
     M5.Lcd.print("TIME SET");
     WiFi.disconnect(true);
     delay(2000);
@@ -644,9 +602,9 @@ uint8_t region;
 
 void tvbgone_setup() {
   M5.Lcd.fillScreen(BLACK);
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(4);
   M5.Lcd.setCursor(5, 1);
-  M5.Lcd.println("M5StickC-IR");
+  M5.Lcd.println("TV-B-Gone");
   irsend.begin();
   delay_ten_us(5000);
   // determine region
@@ -718,10 +676,11 @@ void sendAllCodes()
     DEBUGP(putstring("\n\rOn/off pairs: ");
            putnum_ud(numpairs));
     M5.Lcd.fillScreen(BLACK);
-    M5.Lcd.setTextSize(1);
+    M5.Lcd.setTextSize(4);
     M5.Lcd.setCursor(5, 1);
-    M5.Lcd.println("M5StickC-IR");
-    M5.Lcd.println(numpairs);
+    M5.Lcd.println("TV-B-Gone");
+    M5.Lcd.setTextSize(2);
+    // M5.Lcd.println(numpairs);
     // Get the number of bits we use to index into the timer table
     // This is the third byte of the structure
     const uint8_t bitcompression = powerCode->bitcompression;
@@ -740,8 +699,9 @@ void sendAllCodes()
       ti = (read_bits(bitcompression)) * 2;
 
       // read the onTime and offTime from the program memory
-      ontime = powerCode->times[ti];  // read word 1 - ontime
-      offtime = powerCode->times[ti + 1]; // read word 2 - offtime
+      // hack: Stick-C Plus LEDs are Active Low, and I swapped offtime/ontime to account for this.
+      offtime = powerCode->times[ti];  // read word 1 - ontime
+      ontime = powerCode->times[ti + 1]; // read word 2 - offtime
 
       DEBUGP(putstring("\n\rti = ");
              putnum_ud(ti >> 1);
@@ -750,11 +710,14 @@ void sendAllCodes()
       DEBUGP(putstring("\t");
              putnum_ud(offtime));
 
-      rawData[k * 2] = ontime * 10;
-      rawData[(k * 2) + 1] = offtime * 10;
+      M5.Lcd.setTextSize(1);
+      M5.Lcd.printf("rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
+
+      rawData[k * 2] = offtime * 10;
+      rawData[(k * 2) + 1] = ontime * 10;
       yield();
     }
-
+    
     // Send Code with library
     irsend.sendRaw(rawData, (numpairs * 2) , freq);
     Serial.print("\n");
@@ -842,15 +805,17 @@ void quickflashLEDx( uint8_t x ) {
 
 /// CLOCK ///
 void clock_setup() {
+  // Hack: Set IRLED high in watch mode to turn it off. Otherwise it stays on (active low)
+  digitalWrite(IRLED, HIGH);
   M5.Lcd.setRotation(rotation);
   M5.Lcd.fillScreen(BLACK);
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(3);
 }
 
 void clock_loop() {
   M5.Rtc.GetBm8563Time();
-  M5.Lcd.setCursor(40, 30, 2);
-  M5.Lcd.printf("%02d : %02d : %02d\n", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
+  M5.Lcd.setCursor(40, 40, 2);
+  M5.Lcd.printf("%02d:%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
   delay(250);
 }
 
@@ -872,8 +837,8 @@ void setup() {
   // Boot Screen
   digitalWrite(M5_LED, HIGH); //LEDOFF
   M5.Lcd.fillScreen(BLACK);
-  M5.Lcd.setTextSize(2);
-  M5.Lcd.setCursor(20, 30, 1);
+  M5.Lcd.setTextSize(3);
+  M5.Lcd.setCursor(5, 10);
   M5.Lcd.setRotation(rotation);
   M5.Lcd.print("HAKR_WATCH");
 
@@ -921,15 +886,12 @@ void loop() {
         tvbgone_setup();
         break;
       case 6:
-        megalovainia_setup();
-        break;
-      case 7:
         battery_setup();
         break;
-      case 8:
+      case 7:
         rmenu_setup();
         break;
-      case 9:
+      case 8:
         tzmenu_setup();
         break;
     }
@@ -954,13 +916,13 @@ void loop() {
     case 5:
       tvbgone_loop();
       break;
-    case 7:
+    case 6:
       battery_loop();
       break;
-    case 8:
+    case 7:
       rmenu_loop();
       break;
-    case 9:
+    case 8:
       tzmenu_loop();
       break;
   }
